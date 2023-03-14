@@ -14,7 +14,8 @@ class ContactList extends StatelessWidget {
         if (contactList.isEmpty) {
           return Center(
             child: TextButton(
-              onPressed: () => context.read(),
+              onPressed: () =>
+                  context.read<ContactBloc>().add(ContactFetchEvent()),
               child: const Text('Load Contacts'),
             ),
           );

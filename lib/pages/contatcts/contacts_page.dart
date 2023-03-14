@@ -25,8 +25,10 @@ class _ContactsPageState extends State<ContactsPage> {
             );
           }
 
-          if (state.error != null) {
-            return Container();
+          if (state.error != null && state.error != '') {
+            return Container(
+              decoration: BoxDecoration(color: Colors.red),
+            );
           }
 
           return const ContactList();
