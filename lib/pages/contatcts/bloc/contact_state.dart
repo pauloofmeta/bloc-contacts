@@ -1,17 +1,42 @@
-import 'package:bloc_contacts/models/contact.dart';
+part of 'contact_bloc.dart';
 
-abstract class ContactState {}
-
-class ContactListState extends ContactState {
-  final List<Contact> data;
-
-  ContactListState(this.data);
-}
-
-class ContactLoadingState extends ContactState {}
-
-class ContactErrorState extends ContactState {
+class ContactState extends Equatable {
+  final List<Contact> contacts;
   final dynamic error;
+  final bool loading;
 
-  ContactErrorState(this.error);
+  const ContactState({
+    this.contacts = const [],
+    this.error = '',
+    this.loading = false,
+  });
+
+  ContactState copyWith({
+    List<Contact>? contacts,
+    dynamic error,
+    bool? loading,
+  }) {
+    return ContactState(
+      contacts: contacts ?? this.contacts,
+      error: error ?? this.error,
+      loading: loading ?? this.loading,
+    );
+  }
+
+  @override
+  List<Object> get props => [contacts, error, loading];
 }
+
+// class ContactListState extends ContactState {
+//   final List<Contact> data;
+
+//   ContactListState(this.data);
+// }
+
+// class ContactLoadingState extends ContactState {}
+
+// class ContactErrorState extends ContactState {
+//   final dynamic error;
+
+//   ContactErrorState(this.error);
+// }

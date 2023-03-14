@@ -1,5 +1,16 @@
-abstract class ContactEvent {}
+part of 'contact_bloc.dart';
 
-class ClearContactEvent implements ContactEvent {}
+abstract class ContactEvent extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
 
-class FecthContactEvent implements ContactEvent {}
+class ContactClearEvent extends ContactEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class ContactFetchEvent extends ContactEvent {
+  @override
+  List<Object?> get props => [];
+}

@@ -1,7 +1,5 @@
 import 'package:bloc_contacts/models/contact.dart';
 import 'package:bloc_contacts/pages/contatcts/bloc/contact_bloc.dart';
-import 'package:bloc_contacts/pages/contatcts/bloc/contact_event.dart';
-import 'package:bloc_contacts/pages/contatcts/bloc/contact_state.dart';
 import 'package:bloc_contacts/repositories/contact_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -24,32 +22,35 @@ void main() {
   });
 
   test('Initial state is correct', () {
-    expect(bloc.state, isA<ContactLoadingState>());
+    expect(bloc.state.contacts.isEmpty, true);
+    expect(bloc.state.loading, false);
   });
 
   test('Should a contact list', () async {
+    final contacts = [contact, contact];
     when(() => repository.getAll()).thenAnswer(
-      (_) async => <Contact>[contact, contact],
+      (_) async => contacts,
     );
 
-    bloc.add(FecthContactEvent());
+    bloc.add(ContactFetchEvent());
     await expectLater(
         bloc.stream,
         emitsInOrder([
-          isA<ContactLoadingState>(),
-          isA<ContactListState>(),
+          const ContactState(loading: true, contacts: []),
+          ContactState(loading: false, contacts: contacts),
         ]));
   });
 
   test('Should return a erro', () async {
-    when(() => repository.getAll()).thenThrow(Exception('Occurrs a error'));
+    final exception = Exception('Occurrs a error');
+    when(() => repository.getAll()).thenThrow(exception);
 
-    bloc.add(FecthContactEvent());
+    bloc.add(ContactFetchEvent());
     await expectLater(
         bloc.stream,
         emitsInOrder([
-          isA<ContactLoadingState>(),
-          isA<ContactErrorState>(),
+          const ContactState(loading: true, contacts: []),
+          ContactState(loading: false, error: exception.toString()),
         ]));
   });
 }

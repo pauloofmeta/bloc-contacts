@@ -1,29 +1,34 @@
 import 'package:bloc_contacts/repositories/contact_repository.dart';
-
-import 'contact_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:bloc_contacts/models/contact.dart';
 
-import 'contact_state.dart';
+part 'contact_event.dart';
+part 'contact_state.dart';
 
 class ContactBloc extends Bloc<ContactEvent, ContactState> {
   final ContactRepository repository;
 
-  ContactBloc(this.repository) : super(ContactLoadingState()) {
-    on<ClearContactEvent>(clear);
-    on<FecthContactEvent>(fecth);
+  ContactBloc(this.repository) : super(const ContactState()) {
+    on<ContactClearEvent>(clear);
+    on<ContactFetchEvent>(fecth);
   }
 
-  void clear(ClearContactEvent event, Emitter<ContactState> emit) {
-    return emit(ContactListState([]));
+  void clear(ContactClearEvent event, Emitter<ContactState> emit) {
+    emit(state.copyWith(
+      contacts: [],
+      error: '',
+      loading: false,
+    ));
   }
 
-  void fecth(FecthContactEvent event, Emitter<ContactState> emit) async {
-    emit(ContactLoadingState());
+  void fecth(ContactFetchEvent event, Emitter<ContactState> emit) async {
+    emit(state.copyWith(loading: true));
     try {
       final list = await repository.getAll();
-      return emit(ContactListState(list));
+      emit(state.copyWith(contacts: list, loading: false));
     } catch (e) {
-      return emit(ContactErrorState(e));
+      emit(state.copyWith(error: e.toString(), loading: false));
     }
   }
 }
